@@ -1,5 +1,5 @@
 locals {
-  account_files = fileset(path.module, "account-aws-*.yaml")
+  account_files = fileset("${path.module}/config", "account-aws-*.yaml")
   accounts = {
     for k in local.account_files :
     trimsuffix(k, ".yaml") => yamldecode(file(k))

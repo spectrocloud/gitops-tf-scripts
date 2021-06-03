@@ -1,5 +1,5 @@
 locals {
-  cluster_files = fileset(path.module, "cluster-eks-*.yaml")
+  cluster_files = fileset("${path.module}/config", "cluster-eks-*.yaml")
   clusters = {
     for k in local.cluster_files :
     trimsuffix(k, ".yaml") => yamldecode(file(k))
