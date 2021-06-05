@@ -103,9 +103,9 @@ resource "spectrocloud_cluster_profile" "this" {
   }
 }
 
-resource "spectrocloud_cluster_profile" "ehs-1.5" {
-  name        = "ProdEKS-1"
-  description = "basic eks cp"
+resource "spectrocloud_cluster_profile" "ehs-1_5" {
+  name        = "EHS-1.5"
+  description = "EHS app"
   type        = "add-on"
 
   pack {
