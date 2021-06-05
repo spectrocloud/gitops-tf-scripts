@@ -180,7 +180,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
                 app: foo
             spec:
               containers:
-              - image: hello
+              - image: hellodsfas
                 name: hello
                 resources: {}
       EOT
