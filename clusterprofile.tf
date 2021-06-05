@@ -160,20 +160,29 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
     manifest {
       name    = "nginx"
       content = <<-EOT
-        apiVersion: v1
-        kind: Pod
+        apiVersion: apps/v1
+        kind: Deployment
         metadata:
           creationTimestamp: null
           labels:
-            run: foo
+            app: foo
           name: foo
         spec:
-          containers:
-          - image: nginx
-            name: foo
-            resources: {}
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
+          replicas: 1
+          selector:
+            matchLabels:
+              app: foo
+          strategy: {}
+          template:
+            metadata:
+              creationTimestamp: null
+              labels:
+                app: foo
+            spec:
+              containers:
+              - image: hello
+                name: hello
+                resources: {}
       EOT
     }
   }
