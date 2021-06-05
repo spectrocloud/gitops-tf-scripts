@@ -102,3 +102,58 @@ resource "spectrocloud_cluster_profile" "this" {
     values = data.spectrocloud_pack.argo-cd.values
   }
 }
+
+resource "spectrocloud_cluster_profile" "ehs-1.5" {
+  name        = "ProdEKS-1"
+  description = "basic eks cp"
+  type        = "add-on"
+
+  pack {
+    name = "manifest-pod"
+    type = "manifest"
+    # values = <<-EOT
+    #   pack:
+    #     installPriority: 0
+    # EOT
+
+    manifest {
+      name    = "nginx"
+      content = <<-EOT
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          creationTimestamp: null
+          labels:
+            run: foo
+          name: foo
+        spec:
+          containers:
+          - image: nginx
+            name: foo
+            resources: {}
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+      EOT
+    }
+  }
+
+  pack {
+    name   = "manifest-namespace"
+    type   = "manifest"
+    values = <<-EOT
+      pack:
+        installPriority: 1
+    EOT
+
+    manifest {
+
+      name    = "namespace"
+      content = <<-EOT
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: test-delayed-namespace
+      EOT
+    }
+  }
+}
