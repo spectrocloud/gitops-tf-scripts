@@ -150,8 +150,8 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
   type        = "add-on"
 
   pack {
-    name = "manifest-pod"
-    type = "manifest"
+    name   = "manifest-pod"
+    type   = "manifest"
     values = <<-EOT
       pack:
         installPriority: 100
