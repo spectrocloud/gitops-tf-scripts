@@ -64,7 +64,48 @@ resource "spectrocloud_cluster_profile" "this" {
     name   = data.spectrocloud_pack.k8s.name
     tag    = data.spectrocloud_pack.k8s.version
     uid    = data.spectrocloud_pack.k8s.id
-    values = data.spectrocloud_pack.k8s.values
+    values = <<-EOT
+      #EKS settings
+      managedControlPlane:
+
+        #Controlplane Logging
+        logging:
+
+          # Setting to toggle Kubernetes API Server logging (kube-apiserver)
+          apiServer: false
+
+          # Setting to toggle the Kubernetes API audit logging
+          audit: false
+
+          # Setting to toggle the cluster authentication logging
+          authenticator: false
+
+          # Setting to toggle the controller manager (kube-controller-manager) logging
+          controllerManager: false
+
+          # Setting to toggle the Kubernetes scheduler (kube-scheduler) logging
+          scheduler: false
+
+        # OIDC related config
+        # Uncomment below section when the EKS cluster has to be setup with OIDC authentication.
+        # Note : Leave the param values in this config as is, so that validation for these params will happen during cluster provisioning
+        oidcIdentityProvider:
+
+          #The name of the OIDC provider configuration
+          identityProviderConfigName: oidc1
+
+          # The ID for the client application that makes authentication requests to the OpenID identity provider
+          clientId: 5ajs8pq0gatbgpjejld96fldrn
+
+          #The URL of the OpenID identity provider that allows the API server to discover public signing keys for verifying tokens
+          issuerUrl: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ajvPoziaS
+
+          usernamePrefix: "-"
+
+          usernameClaim: email
+
+          groupsClaim: cognito:groups
+    EOT
   }
 
   pack {
