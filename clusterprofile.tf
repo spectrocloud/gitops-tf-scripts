@@ -152,10 +152,10 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
   pack {
     name = "manifest-pod"
     type = "manifest"
-    # values = <<-EOT
-    #   pack:
-    #     installPriority: 0
-    # EOT
+    values = <<-EOT
+      pack:
+        installPriority: 100
+    EOT
 
     manifest {
       name    = "nginx"
