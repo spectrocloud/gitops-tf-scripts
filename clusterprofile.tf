@@ -154,7 +154,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
     type   = "manifest"
     values = <<-EOT
       pack:
-        installPriority: 100
+        spectrocloud.com/install-priority: "100"
     EOT
 
     manifest {
@@ -192,7 +192,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
     type   = "manifest"
     values = <<-EOT
       pack:
-        installPriority: 1
+        spectrocloud.com/install-priority: "0"
     EOT
 
     manifest {
