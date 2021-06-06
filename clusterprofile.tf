@@ -227,26 +227,26 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
 
     manifest {
 
-      name    = "ehs-kong"
+      name    = "ehs-spark"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: ehs-kong
+          name: ehs-spark
           namespace: argocd
           finalizers:
           - resources-finalizer.argocd.argoproj.io
         spec:
           destination:
             server: 'https://kubernetes.default.svc'
-            namespace: ehs-kong
+            namespace: ehs-spark
           source:
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            chart: helm/kong
-            targetRevision: 3.7.4
+            chart: helm/spark
+            targetRevision: 5.4.4
             helm:
               parameters:
-              - name: kong.testing
+              - name: spark.testing
                 value: 2Gi
           project: default
           syncPolicy:
