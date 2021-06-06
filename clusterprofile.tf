@@ -23,10 +23,10 @@ data "spectrocloud_pack" "aws-ssm-agent" {
   version = "1.0.0"
 }
 
-data "spectrocloud_pack" "spectro-rbac" {
-  name    = "spectro-rbac"
-  version = "1.0.0"
-}
+# data "spectrocloud_pack" "spectro-rbac" {
+#   name    = "spectro-rbac"
+#   version = "1.0.0"
+# }
 
 data "spectrocloud_pack" "csi" {
   name    = "csi-aws"
@@ -129,12 +129,12 @@ resource "spectrocloud_cluster_profile" "this" {
     values = data.spectrocloud_pack.aws-ssm-agent.values
   }
 
-  pack {
-    name   = data.spectrocloud_pack.spectro-rbac.name
-    tag    = data.spectrocloud_pack.spectro-rbac.version
-    uid    = data.spectrocloud_pack.spectro-rbac.id
-    values = "# RBAC Permissions specified at the cluster level"
-  }
+  # pack {
+  #   name   = data.spectrocloud_pack.spectro-rbac.name
+  #   tag    = data.spectrocloud_pack.spectro-rbac.version
+  #   uid    = data.spectrocloud_pack.spectro-rbac.id
+  #   values = "# RBAC Permissions specified at the cluster level"
+  # }
 
   pack {
     name   = data.spectrocloud_pack.argo-cd.name
