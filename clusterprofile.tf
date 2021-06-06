@@ -150,7 +150,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
   type        = "add-on"
 
   pack {
-    name   = "manifest-pod"
+    name   = "vault"
     type   = "manifest"
     values = <<-EOT
       pack:
@@ -158,37 +158,32 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
     EOT
 
     manifest {
-      name    = "nginx"
+      name    = "vault"
       content = <<-EOT
-        apiVersion: apps/v1
-        kind: Deployment
+        apiVersion: argoproj.io/v1alpha1
+        kind: Application
         metadata:
-          creationTimestamp: null
-          labels:
-            app: foo
-          name: foo
+          name: vault
+          namespace: argocd
         spec:
-          replicas: 1
-          selector:
-            matchLabels:
-              app: foo
-          strategy: {}
-          template:
-            metadata:
-              creationTimestamp: null
-              labels:
-                app: foo
-            spec:
-              containers:
-              - image: hellodsfas
-                name: hello
-                resources: {}
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: default
+          source:
+            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
+            targetRevision: latest
+            chart: helm/vault
+          project: default
+          syncPolicy:
+            automated:
+              selfHeal: true
+              prune: true
       EOT
     }
   }
 
   pack {
-    name   = "manifest-namespace"
+    name   = "spectro-rbac"
     type   = "manifest"
     values = <<-EOT
       pack:
@@ -197,12 +192,29 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
 
     manifest {
 
-      name    = "namespace"
+      name    = "rbac"
       content = <<-EOT
-        apiVersion: v1
-        kind: Namespace
+        apiVersion: argoproj.io/v1alpha1
+        kind: Application
         metadata:
-          name: test-delayed-namespace
+          name: vault
+          namespace: argocd
+        spec:
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: default
+          source:
+            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
+            chart: helm/spectro-rbac
+            targetRevision: 1.0.1
+            helm:
+              valueFiles:
+                - values-example.yaml
+          project: default
+          syncPolicy:
+            automated:
+              selfHeal: true
+            prune: true
       EOT
     }
   }
