@@ -150,15 +150,15 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
   type        = "add-on"
 
   pack {
-    name   = "vault"
+    name   = "ehs-infra"
     type   = "manifest"
     values = <<-EOT
       pack:
-        spectrocloud.com/install-priority: "1"
+        spectrocloud.com/install-priority: "10"
     EOT
 
     manifest {
-      name    = "vault"
+      name    = "rabbitmq"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
@@ -170,11 +170,39 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
         spec:
           destination:
             server: 'https://kubernetes.default.svc'
-            namespace: default
+            namespace: ehs-rabbitmq
           source:
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            targetRevision: latest
-            chart: helm/vault
+            targetRevision: 8.15.2
+            chart: helm/rabbitmq
+          project: default
+          syncPolicy:
+            automated:
+              selfHeal: false
+              prune: true
+      EOT
+    }
+    manifest {
+      name    = "postgresql"
+      content = <<-EOT
+        apiVersion: argoproj.io/v1alpha1
+        kind: Application
+        metadata:
+          name: vault
+          namespace: argocd
+          finalizers:
+          - resources-finalizer.argocd.argoproj.io
+        spec:
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: ehs-postgresql
+          source:
+            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
+            targetRevision: 10.4.9
+            chart: helm/postgresql
+            parameters:
+            - name: persistence.size
+              value: 2Gi
           project: default
           syncPolicy:
             automated:
@@ -185,16 +213,16 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
   }
 
   pack {
-    name   = "spectro-rbac"
+    name   = "ehs-platform"
     type   = "manifest"
     values = <<-EOT
       pack:
-        spectrocloud.com/install-priority: "2"
+        spectrocloud.com/install-priority: "20"
     EOT
 
     manifest {
 
-      name    = "rbac"
+      name    = "kong"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
@@ -206,18 +234,57 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
         spec:
           destination:
             server: 'https://kubernetes.default.svc'
-            namespace: default
+            namespace: ehs-kong
           source:
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            chart: helm/spectro-rbac
-            targetRevision: 1.0.1
-            helm:
-              valueFiles:
-                - values-example.yaml
+            chart: helm/kong
+            targetRevision: 3.7.4
+            parameters:
+            - name: kong.testing
+              value: 2Gi
           project: default
           syncPolicy:
             automated:
-              selfHeal: true
+              selfHeal: false
+              prune: true
+      EOT
+    }
+  }
+
+  pack {
+    name   = "ehs-app"
+    type   = "manifest"
+    values = <<-EOT
+      pack:
+        spectrocloud.com/install-priority: "30"
+    EOT
+
+    manifest {
+
+      name    = "app1"
+      content = <<-EOT
+        apiVersion: argoproj.io/v1alpha1
+        kind: Application
+        metadata:
+          name: spectro-rbac
+          namespace: argocd
+          finalizers:
+          - resources-finalizer.argocd.argoproj.io
+        spec:
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: ehs-app1
+          source:
+            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
+            chart: helm/nginx
+            targetRevision: 9.1.0
+            parameters:
+            - name: app.testing
+              value: cool
+          project: default
+          syncPolicy:
+            automated:
+              selfHeal: false
               prune: true
       EOT
     }
