@@ -158,12 +158,12 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
     EOT
 
     manifest {
-      name    = "rabbitmq"
+      name    = "ehs-rabbitmq"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: vault
+          name: ehs-rabbitmq
           namespace: argocd
           finalizers:
           - resources-finalizer.argocd.argoproj.io
@@ -180,15 +180,17 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             automated:
               selfHeal: false
               prune: true
+            syncOptions:
+            - CreateNamespace=true
       EOT
     }
     manifest {
-      name    = "postgresql"
+      name    = "ehs-postgresql"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: vault
+          name: ehs-postgresql
           namespace: argocd
           finalizers:
           - resources-finalizer.argocd.argoproj.io
@@ -208,6 +210,8 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             automated:
               selfHeal: false
               prune: true
+            syncOptions:
+            - CreateNamespace=true
       EOT
     }
   }
@@ -222,12 +226,12 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
 
     manifest {
 
-      name    = "kong"
+      name    = "ehs-kong"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: spectro-rbac
+          name: ehs-kong
           namespace: argocd
           finalizers:
           - resources-finalizer.argocd.argoproj.io
@@ -247,12 +251,14 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             automated:
               selfHeal: false
               prune: true
+            syncOptions:
+            - CreateNamespace=true
       EOT
     }
   }
 
   pack {
-    name   = "ehs-app"
+    name   = "ehs-app1"
     type   = "manifest"
     values = <<-EOT
       pack:
@@ -261,12 +267,12 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
 
     manifest {
 
-      name    = "app1"
+      name    = "ehs-app1"
       content = <<-EOT
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: spectro-rbac
+          name: ehs-app1
           namespace: argocd
           finalizers:
           - resources-finalizer.argocd.argoproj.io
@@ -286,6 +292,8 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             automated:
               selfHeal: false
               prune: true
+            syncOptions:
+            - CreateNamespace=true
       EOT
     }
   }
