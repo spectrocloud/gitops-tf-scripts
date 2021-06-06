@@ -176,7 +176,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
           project: default
           syncPolicy:
             automated:
-              selfHeal: true
+              selfHeal: false
               prune: true
       EOT
     }
