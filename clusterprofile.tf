@@ -165,6 +165,8 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
         metadata:
           name: vault
           namespace: argocd
+          finalizers:
+          - resources-finalizer.argocd.argoproj.io
         spec:
           destination:
             server: 'https://kubernetes.default.svc'
@@ -199,6 +201,8 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
         metadata:
           name: spectro-rbac
           namespace: argocd
+          finalizers:
+          - resources-finalizer.argocd.argoproj.io
         spec:
           destination:
             server: 'https://kubernetes.default.svc'
