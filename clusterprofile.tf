@@ -197,7 +197,7 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
         apiVersion: argoproj.io/v1alpha1
         kind: Application
         metadata:
-          name: vault
+          name: spectro-rbac
           namespace: argocd
         spec:
           destination:
