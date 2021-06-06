@@ -5,13 +5,13 @@
 # }
 #
 
-locals {
-  profile_ids = {
-    ProdEKS-1 = spectrocloud_cluster_profile.this.id
-    # for k, v in spectrocloud_cluster_profile.this :
-    # v.name => v.id
-  }
-}
+# locals {
+#   profile_ids = {
+#     ProdEKS-1 = spectrocloud_cluster_profile.this.id
+#     # for k, v in spectrocloud_cluster_profile.this :
+#     # v.name => v.id
+#   }
+# }
 
 data "spectrocloud_pack" "argo-cd" {
   name    = "argo-cd"
@@ -141,163 +141,5 @@ resource "spectrocloud_cluster_profile" "this" {
     tag    = data.spectrocloud_pack.argo-cd.version
     uid    = data.spectrocloud_pack.argo-cd.id
     values = data.spectrocloud_pack.argo-cd.values
-  }
-}
-
-resource "spectrocloud_cluster_profile" "ehs-1_5" {
-  name        = "EHS-1.5"
-  description = "EHS app"
-  type        = "add-on"
-
-  pack {
-    name   = "ehs-infra"
-    type   = "manifest"
-    values = <<-EOT
-      pack:
-        spectrocloud.com/install-priority: "10"
-    EOT
-
-    manifest {
-      name    = "ehs-rabbitmq"
-      content = <<-EOT
-        apiVersion: argoproj.io/v1alpha1
-        kind: Application
-        metadata:
-          name: ehs-rabbitmq
-          namespace: argocd
-          finalizers:
-          - resources-finalizer.argocd.argoproj.io
-        spec:
-          destination:
-            server: 'https://kubernetes.default.svc'
-            namespace: ehs-rabbitmq
-          source:
-            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            targetRevision: 8.15.2
-            chart: helm/rabbitmq
-          project: default
-          syncPolicy:
-            automated:
-              selfHeal: false
-              prune: true
-            syncOptions:
-            - CreateNamespace=true
-      EOT
-    }
-    manifest {
-      name    = "ehs-postgresql"
-      content = <<-EOT
-        apiVersion: argoproj.io/v1alpha1
-        kind: Application
-        metadata:
-          name: ehs-postgresql
-          namespace: argocd
-          finalizers:
-          - resources-finalizer.argocd.argoproj.io
-        spec:
-          destination:
-            server: 'https://kubernetes.default.svc'
-            namespace: ehs-postgresql
-          source:
-            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            targetRevision: 10.4.9
-            chart: helm/postgresql
-            helm:
-              parameters:
-              - name: persistence.size
-                value: 2Gi
-          project: default
-          syncPolicy:
-            automated:
-              selfHeal: false
-              prune: true
-            syncOptions:
-            - CreateNamespace=true
-      EOT
-    }
-  }
-
-  pack {
-    name   = "ehs-platform"
-    type   = "manifest"
-    values = <<-EOT
-      pack:
-        spectrocloud.com/install-priority: "20"
-    EOT
-
-    manifest {
-
-      name    = "ehs-spark"
-      content = <<-EOT
-        apiVersion: argoproj.io/v1alpha1
-        kind: Application
-        metadata:
-          name: ehs-spark
-          namespace: argocd
-          finalizers:
-          - resources-finalizer.argocd.argoproj.io
-        spec:
-          destination:
-            server: 'https://kubernetes.default.svc'
-            namespace: ehs-spark
-          source:
-            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            chart: helm/spark
-            targetRevision: 5.4.4
-            helm:
-              parameters:
-              - name: spark.testing
-                value: 2Gi
-          project: default
-          syncPolicy:
-            automated:
-              selfHeal: false
-              prune: true
-            syncOptions:
-            - CreateNamespace=true
-      EOT
-    }
-  }
-
-  pack {
-    name   = "ehs-app1"
-    type   = "manifest"
-    values = <<-EOT
-      pack:
-        spectrocloud.com/install-priority: "30"
-    EOT
-
-    manifest {
-
-      name    = "ehs-app1"
-      content = <<-EOT
-        apiVersion: argoproj.io/v1alpha1
-        kind: Application
-        metadata:
-          name: ehs-app1
-          namespace: argocd
-          finalizers:
-          - resources-finalizer.argocd.argoproj.io
-        spec:
-          destination:
-            server: 'https://kubernetes.default.svc'
-            namespace: ehs-app1
-          source:
-            repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
-            chart: helm/nginx
-            targetRevision: 9.1.0
-            helm:
-              parameters:
-              - name: app.testing
-                value: cool
-          project: default
-          syncPolicy:
-            automated:
-              selfHeal: false
-              prune: true
-            syncOptions:
-            - CreateNamespace=true
-      EOT
-    }
   }
 }
