@@ -202,9 +202,10 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
             targetRevision: 10.4.9
             chart: helm/postgresql
-            parameters:
-            - name: persistence.size
-              value: 2Gi
+            helm:
+              parameters:
+              - name: persistence.size
+                value: 2Gi
           project: default
           syncPolicy:
             automated:
@@ -243,9 +244,10 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
             chart: helm/kong
             targetRevision: 3.7.4
-            parameters:
-            - name: kong.testing
-              value: 2Gi
+            helm:
+              parameters:
+              - name: kong.testing
+                value: 2Gi
           project: default
           syncPolicy:
             automated:
@@ -284,9 +286,10 @@ resource "spectrocloud_cluster_profile" "ehs-1_5" {
             repoURL: 593235963820.dkr.ecr.us-west-2.amazonaws.com
             chart: helm/nginx
             targetRevision: 9.1.0
-            parameters:
-            - name: app.testing
-              value: cool
+            helm:
+              parameters:
+              - name: app.testing
+                value: cool
           project: default
           syncPolicy:
             automated:
