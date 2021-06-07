@@ -30,9 +30,9 @@ locals {
 locals {
   profile_ids = merge({
     ProdEKS-1 = spectrocloud_cluster_profile.this.id
-  }, {
+    }, {
     for k, v in spectrocloud_cluster_profile.ehl :
-      v.name => v.id
+    v.name => v.id
   })
 }
 
