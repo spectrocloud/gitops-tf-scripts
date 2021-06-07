@@ -28,11 +28,12 @@ locals {
 ################################  Cluster Profile #################################################
 
 locals {
-  profile_ids = {
+  profile_ids = merge({
     ProdEKS-1 = spectrocloud_cluster_profile.this.id
-    # for k, v in spectrocloud_cluster_profile.this :
-    # v.name => v.id
-  }
+  }, {
+    for k, v in spectrocloud_cluster_profile.ehl :
+      v.name => v.id
+  })
 }
 
 resource "spectrocloud_cluster_profile" "ehl" {

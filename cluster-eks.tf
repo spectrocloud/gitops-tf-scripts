@@ -27,9 +27,8 @@ resource "spectrocloud_cluster_eks" "this" {
   for_each = local.clusters
   name     = each.value.name
 
-  # TODO use dynamic
   cluster_profile {
-    id = local.profile_ids[each.value.profiles[0].name]
+    id = local.profile_ids[each.value.profiles.infra]
 
     pack {
       name   = "spectro-rbac"
@@ -40,6 +39,10 @@ resource "spectrocloud_cluster_eks" "this" {
             ${indent(4, replace(yamlencode(each.value.rbac), "/((?:^|\n)[\\s-]*)\"([\\w-]+)\":/", "$1$2:"))}
       EOT
     }
+  }
+
+  cluster_profile {
+    id = local.profile_ids[each.value.profiles.ehl]
   }
 
   cloud_account_id = local.account_ids[each.value.cloud_account]
