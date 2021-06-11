@@ -2,3 +2,4 @@ config/
 temp/
 .terraform.lock.hcl
 .terraform/
+terraform.tfvars
