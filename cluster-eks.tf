@@ -55,6 +55,22 @@ resource "spectrocloud_cluster_eks" "this" {
     azs                 = []
     public_access_cidrs = []
   }
+
+  backup_policy {
+    schedule                  = each.value.backup_policy.schedule
+    backup_location_id        = local.bsl_ids[each.value.backup_policy.backup_location]
+    prefix                    = each.value.backup_policy.prefix
+    expiry_in_hour            = 7200
+    include_disks             = true
+    include_cluster_resources = true
+  }
+
+  scan_policy {
+    configuration_scan_schedule: each.value.scan_policy.configuration_scan_schedule
+    penetration_scan_schedule: each.value.scan_policy.penetration_scan_schedule
+    conformance_scan_schedule: each.value.scan_policy.conformance_scan_schedule
+  }
+
   # pack {
   #   name = "kubernetes"
   #   tag  = var.cluster_packs["k8s"].tag
