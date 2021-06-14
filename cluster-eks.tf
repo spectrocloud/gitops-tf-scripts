@@ -66,9 +66,9 @@ resource "spectrocloud_cluster_eks" "this" {
   }
 
   scan_policy {
-    configuration_scan_schedule: each.value.scan_policy.configuration_scan_schedule
-    penetration_scan_schedule: each.value.scan_policy.penetration_scan_schedule
-    conformance_scan_schedule: each.value.scan_policy.conformance_scan_schedule
+    configuration_scan_schedule = each.value.scan_policy.configuration_scan_schedule
+    penetration_scan_schedule   = each.value.scan_policy.penetration_scan_schedule
+    conformance_scan_schedule   = each.value.scan_policy.conformance_scan_schedule
   }
 
   # pack {
