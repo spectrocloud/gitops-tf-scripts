@@ -1,41 +1,40 @@
 locals {
-  core_module_files = fileset("${path.module}/config", "core-module.yaml")
-  core_modules = {
-  for k in local.core_module_files :
+  core_files = fileset("${path.module}/config", "core-*.yaml")
+  coremodules = {
+  for k in local.core_files :
   trimsuffix(k, ".yaml") => yamldecode(file("config/${k}"))
   }
 
-  # rbac_yaml    = yamldecode(file("rbac.yaml"))
-  # rbac_all_crb = lookup(local.rbac_yaml.all_clusters, "clusterRoleBindings", [])
-  # rbac_all_rb  = lookup(local.rbac_yaml.all_clusters, "namespaces", [])
-  # rbac_all_crb = lookup(local.rbac_yaml.all_clusters, "clusterRoleBindings", [])
-  # rbac_all_rb  = lookup(local.rbac_yaml.all_clusters, "namespaces", [])
-  #
-  # rbac_map = {
-  #   for k, v in local.rbac_yaml.clusters :
-  #   k => {
-  #     clusterRoleBindings = concat(local.rbac_all_crb, lookup(v, "clusterRoleBindings", []))
-  #     namespaces        = concat(local.rbac_all_rb, lookup(v, "namespaces", []))
-  #   }
-  # }
+
 }
 
 module "core" {
-  for_each = local.core_modules
-  source = "./modules/core"
-
+  for_each = local.coremodules
+  source   = "./modules/core"
   # Core Deployment Information
-  env                    = each.value.tags.env
-  application            = each.value.tags.application
-  uai                    = each.value.tags.uai
-  aws_region             = each.value.tags.aws_region
-  aws_az_count           = each.value.tags.aws_az_count
-  aws_availability_zones = each.value.tags.aws_availability_zones
-
+  env         = each.value.tags.env
+  application = each.value.tags.application
+  uai         = each.value.tags.uai
+  region             = each.value.aws_region
+  aws_az_count           = each.value.aws_az_count
+  aws_availability_zones = each.value.aws_availability_zones
   # Virtual Network Infomration
-  vpc_cidr = each.value.tags.vpc_cidr
-
+  vpc_cidr = each.value.vpc_cidr
   # Locals Brought Over
-//  IPSubnets       = each.value.tags.iPSubnets
-//  taggingstandard = each.value.tags.taggingstandard
+  IPSubnets = {
+    subnetpublic      = cidrsubnet(each.value.vpc_cidr, 4, 0) # Auto splits to two /27s - 10.0.0.0/27 and 10.0.0.32/27
+    subnetvpcendpoint = cidrsubnet(each.value.vpc_cidr, 4, 1) # Auto splits to two /27s - 10.0.0.64/27 and 10.0.0.96/27
+  }
+  taggingstandard = {
+    env         = each.value.tags.env
+    application = each.value.tags.application
+    uai         = each.value.tags.uai
+    deployment  = "${each.value.tags.application}-${each.value.tags.env}-${random_string.deploymentid.result}"
+    aws_region  = each.value.aws_region
+  }
+}
+
+resource "random_string" "deploymentid" {
+  length  = 6
+  special = false
 }
