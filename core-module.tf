@@ -15,7 +15,7 @@ module "core" {
   env         = each.value.tags.env
   application = each.value.tags.application
   uai         = each.value.tags.uai
-  region             = each.value.aws_region
+  aws_region             = each.value.aws_region
   aws_az_count           = each.value.aws_az_count
   aws_availability_zones = each.value.aws_availability_zones
   # Virtual Network Infomration
