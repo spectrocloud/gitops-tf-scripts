@@ -15,6 +15,10 @@ locals {
     entry.tags.env => entry
   })
 
+  env_vpc_id = {
+  for k, v in module.core :
+  v.env => v.aws_vpc_main_id
+  }
 }
 
 module "core" {
