@@ -50,8 +50,8 @@ resource "spectrocloud_cluster_eks" "this" {
   cloud_config {
     # ssh_key_name = var.cluster_ssh_public_key_name
     region              = local.cloud_entities[each.value.env].aws_region // each.value.cloud_config.aws_region
-    vpc_id              = each.value.cloud_config.aws_vpc_id
-    az_subnets          = each.value.cloud_config.eks_subnets
+    vpc_id              = module.core.aws_vpc_main_id
+    az_subnets          = module.core.eks_subnets
     azs                 = []
     public_access_cidrs = []
   }
