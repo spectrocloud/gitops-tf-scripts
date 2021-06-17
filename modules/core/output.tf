@@ -36,3 +36,9 @@ output "aws_route_internetigw_id" {
 output "aws_route_table_association_publicinternet_id" {
   value = aws_route_table_association.publicinternet.*.id
 }
+
+output "eks_subnets" {
+  value = merge({
+  for s in aws_subnet.public : s.availability_zone => list(s.id)
+  })
+}
