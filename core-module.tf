@@ -4,7 +4,16 @@ locals {
   for k in local.core_files :
   trimsuffix(k, ".yaml") => yamldecode(file("config/${k}"))
   }
+//
+//  cloud_entities = {
+//  for k, v in module.core :
+//  v.env => v
+//  }
 
+  cloud_entities = merge({
+    for entry in local.coremodules :
+    entry.tags.env => entry
+  })
 
 }
 
@@ -20,7 +29,7 @@ module "core" {
   aws_availability_zones = each.value.aws_availability_zones
   # Virtual Network Infomration
   vpc_cidr = each.value.vpc_cidr
-  # Locals Brought Over
+  # Locals Brought  Over
   IPSubnets = {
     subnetpublic      = cidrsubnet(each.value.vpc_cidr, 4, 0) # Auto splits to two /27s - 10.0.0.0/27 and 10.0.0.32/27
     subnetvpcendpoint = cidrsubnet(each.value.vpc_cidr, 4, 1) # Auto splits to two /27s - 10.0.0.64/27 and 10.0.0.96/27
