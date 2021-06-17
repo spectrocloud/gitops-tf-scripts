@@ -19,6 +19,11 @@ locals {
   for k, v in module.core :
   v.env => v.aws_vpc_main_id
   }
+
+  env_subnets = {
+  for k, v in module.core :
+  v.env => v.eks_subnets
+  }
 }
 
 module "core" {
