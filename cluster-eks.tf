@@ -25,6 +25,10 @@ locals {
 # Create the VMware cluster
 resource "spectrocloud_cluster_eks" "this" {
   for_each = local.clusters
+  depends_on = [
+    module.core.aws_vpc_main_id
+  ]
+
   name     = each.value.name
 
   cluster_profile {
@@ -48,6 +52,9 @@ resource "spectrocloud_cluster_eks" "this" {
   cloud_account_id = local.account_ids[each.value.cloud_account]
 
   cloud_config {
+    depends_on = [
+      module.core.aws_vpc_main_id
+    ]
     # ssh_key_name = var.cluster_ssh_public_key_name
     region              = local.cloud_entities[each.value.env].aws_region // each.value.cloud_config.aws_region
     vpc_id              = module.core.aws_vpc_main_id
@@ -107,8 +114,4 @@ resource "spectrocloud_cluster_eks" "this" {
       }
     }
   }
-
-  depends_on = [
-    module.core.aws_vpc_main_id
-  ]
 }
