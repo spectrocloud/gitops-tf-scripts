@@ -49,9 +49,6 @@ resource "spectrocloud_cluster_eks" "this" {
   cloud_account_id = local.account_ids[each.value.cloud_account]
 
   cloud_config {
-    depends_on = [
-      module.core.aws_vpc_main_id
-    ]
     # ssh_key_name = var.cluster_ssh_public_key_name
     region              = local.cloud_entities[each.value.env].aws_region // each.value.cloud_config.aws_region
     vpc_id              =  local.env_vpc_id[each.value.env] #module.core.aws_vpc_main_id
