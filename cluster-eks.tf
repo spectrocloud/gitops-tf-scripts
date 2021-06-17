@@ -107,4 +107,8 @@ resource "spectrocloud_cluster_eks" "this" {
       }
     }
   }
+
+  depends_on = [
+    module.core.aws_vpc_main_id
+  ]
 }
