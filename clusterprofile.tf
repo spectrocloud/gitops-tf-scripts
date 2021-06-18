@@ -48,6 +48,10 @@ data "spectrocloud_pack" "ubuntu" {
   version = "1.0.0"
 }
 
+data "spectrocloud_cluster_profile" "vmware" {
+  name = "ProdVMware-1"
+}
+
 resource "spectrocloud_cluster_profile" "this" {
   name        = "ProdEKS-1"
   description = "basic eks cp"

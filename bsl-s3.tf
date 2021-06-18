@@ -33,8 +33,8 @@ resource "spectrocloud_backup_storage_location" "this" {
   region      = each.value.region
   bucket_name = each.value.bucket_name
   s3 {
-    credential_type     = "sts"
-    arn                 = each.value.arn
-    external_id         = each.value.external_id
+    credential_type = "sts"
+    arn             = each.value.arn
+    external_id     = each.value.external_id
   }
 }

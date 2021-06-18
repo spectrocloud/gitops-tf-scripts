@@ -29,7 +29,9 @@ locals {
 
 locals {
   profile_ids = merge({
-    ProdEKS-1 = spectrocloud_cluster_profile.this.id
+    // TODO rename to aws
+    ProdEKS-1    = spectrocloud_cluster_profile.this.id
+    ProdVMware-1 = data.spectrocloud_cluster_profile.vmware.id
     }, {
     for k, v in spectrocloud_cluster_profile.ehl :
     v.name => v.id

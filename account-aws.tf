@@ -5,10 +5,13 @@ locals {
     trimsuffix(k, ".yaml") => yamldecode(file("config/${k}"))
   }
 
-  account_ids = {
+  # TODO refactor to separate file
+  account_ids = merge({
+    picard-vc2 = "609946e4dba160e6c97aa130"
+  },{
     for k, v in spectrocloud_cloudaccount_aws.this :
     v.name => v.id
-  }
+  })
 
   # rbac_yaml    = yamldecode(file("rbac.yaml"))
   # rbac_all_crb = lookup(local.rbac_yaml.all_accounts, "accountRoleBindings", [])
