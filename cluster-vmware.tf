@@ -76,8 +76,8 @@ resource "spectrocloud_cluster_vsphere" "this" {
   dynamic "machine_pool" {
     for_each = each.value.node_groups
     content {
-      name  = machine_pool.value.name
-      count = machine_pool.value.count
+      name                    = machine_pool.value.name
+      count                   = machine_pool.value.count
       control_plane           = lookup(machine_pool.value, "control_plane", false)
       control_plane_as_worker = lookup(machine_pool.value, "control_plane_as_worker", false)
       dynamic "placement" {
