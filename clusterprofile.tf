@@ -13,6 +13,11 @@
 #   }
 # }
 
+data "spectrocloud_pack" "byom" {
+  name    = "spectro-byo-manifest"
+  version = "1.0.0"
+}
+
 data "spectrocloud_pack" "argo-cd" {
   name    = "argo-cd"
   version = "3.3.5"
@@ -145,5 +150,12 @@ resource "spectrocloud_cluster_profile" "this" {
     tag    = data.spectrocloud_pack.argo-cd.version
     uid    = data.spectrocloud_pack.argo-cd.id
     values = data.spectrocloud_pack.argo-cd.values
+  }
+
+  pack {
+    name   = data.spectrocloud_pack.byom.name
+    tag    = data.spectrocloud_pack.byom.version
+    uid    = data.spectrocloud_pack.byom.id
+    values = data.spectrocloud_pack.byom.values
   }
 }

@@ -20,6 +20,19 @@ locals {
   # }
 }
 
+variable "profileregistrationtemplate" {
+  type = string
+  default = <<EOT
+apiVersion: ehl.ees/v1
+kind: ProfileInstallation
+metadata:
+  name: {{PROFILE_NAME}}
+spec:
+  name: {{PROFILE_NAME}}
+---
+EOT
+}
+
 ################################  Clusters   ####################################################
 
 # Create the VMware cluster
@@ -39,6 +52,19 @@ resource "spectrocloud_cluster_eks" "this" {
             ${indent(4, replace(yamlencode(each.value.rbac), "/((?:^|\n)[\\s-]*)\"([\\w-]+)\":/", "$1$2:"))}
       EOT
     }
+
+    pack {
+      name   = data.spectrocloud_pack.byom.name
+      tag    = data.spectrocloud_pack.byom.version
+      values = <<-EOT
+        manifests:
+          byo-manifest:
+            contents: |
+            ${indent(4, trim(yamlencode(join("", values({for k in each.value.active-profile-registration : k => replace(var.profileregistrationtemplate, "{{PROFILE_NAME}}", k)}))), "|"))}
+
+      EOT
+    }
+  }
   }
 
   cluster_profile {
