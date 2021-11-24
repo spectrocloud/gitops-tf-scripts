@@ -8,21 +8,11 @@ locals {
   # TODO refactor to separate file
   account_ids = merge({
     picard-vc2 = "609946e4dba160e6c97aa130"
+    aws-eks    = "609c506e2bfeae8682408ffb"
     }, {
     for k, v in spectrocloud_cloudaccount_aws.this :
     v.name => v.id
   })
-
-  # rbac_yaml    = yamldecode(file("rbac.yaml"))
-  # rbac_all_crb = lookup(local.rbac_yaml.all_accounts, "accountRoleBindings", [])
-  # rbac_all_rb  = lookup(local.rbac_yaml.all_accounts, "namespaces", [])
-  # rbac_map = {
-  #   for k, v in local.rbac_yaml.accounts :
-  #   k => {
-  #     accountRoleBindings = concat(local.rbac_all_crb, lookup(v, "accountRoleBindings", []))
-  #     namespaces        = concat(local.rbac_all_rb, lookup(v, "namespaces", []))
-  #   }
-  # }
 }
 
 ################################  accounts   ####################################################

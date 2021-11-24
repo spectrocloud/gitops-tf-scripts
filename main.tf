@@ -9,9 +9,15 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-state-spectro"
-    key    = "project-edison/terraform.tfstate"
-    region = "us-east-1"
+    bucket                      = "terraform-state"
+    key                         = "pds-demo/terraform.tfstate"
+    region                      = "ignored"
+    endpoint                    = "https://10.10.137.64:9000"
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    force_path_style            = true
+    #access_key, secret_key initialize with backend-config
   }
 }
 
