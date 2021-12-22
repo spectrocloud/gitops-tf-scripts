@@ -53,18 +53,17 @@ resource "spectrocloud_cluster_eks" "this" {
       EOT
     }
 
-    pack {
-      name   = data.spectrocloud_pack.byom.name
-      tag    = data.spectrocloud_pack.byom.version
-      values = <<-EOT
-        manifests:
-          byo-manifest:
-            contents: |
-            ${indent(4, trim(yamlencode(join("", values({for k in each.value.active-profile-registration : k => replace(var.profileregistrationtemplate, "{{PROFILE_NAME}}", k)}))), "|"))}
-
-      EOT
-    }
-  }
+#    pack {
+#      name   = data.spectrocloud_pack.byom.name
+#      tag    = data.spectrocloud_pack.byom.version
+#      values = <<-EOT
+#        manifests:
+#          byo-manifest:
+#            contents: |
+#            ${indent(4, trim(yamlencode(join("", values({for k in each.value.active-profile-registration : k => replace(var.profileregistrationtemplate, "{{PROFILE_NAME}}", k)}))), "|"))}
+#
+#      EOT
+#    }
   }
 
   cluster_profile {
