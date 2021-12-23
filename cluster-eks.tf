@@ -118,7 +118,7 @@ resource "spectrocloud_cluster_eks" "this" {
     }
   }
   dynamic "fargate_profile" {
-    for_each = each.value.fargate_profiles
+    for_each = try(each.value.fargate_profiles, [])
     content {
       name            = fargate_profile.value.name
       subnets         = fargate_profile.value.subnets

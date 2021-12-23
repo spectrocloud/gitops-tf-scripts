@@ -9,8 +9,8 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-state-spectro"
-    key    = "project-edison/terraform.tfstate"
+    bucket = "terraform-state-spectro-rishi"
+    key    = "project-edison-demo/terraform.tfstate"
     region = "us-east-1"
   }
 }
