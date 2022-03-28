@@ -1,33 +1,46 @@
-terraform {
-  required_version = ">= 0.14.0"
-
-  required_providers {
-    spectrocloud = {
-      version = "~> 0.5.0"
-      source  = "spectrocloud/spectrocloud"
-    }
+locals {
+  accounts = {
+    for k in fileset("config/account", "account-*.yaml") :
+    trimsuffix(k, ".yaml") => yamldecode(file("config/account/${k}"))
   }
 
-  backend "s3" {
-    bucket = "terraform-state-spectro-rishi"
-    key    = "project-edison-demo/terraform.tfstate"
-    region = "us-east-1"
+  bsls = {
+    for k in fileset("config/bsl", "bsl-*.yaml") :
+    trimsuffix(k, ".yaml") => yamldecode(file("config/bsl/${k}"))
+  }
+
+  profiles = {
+    for k in fileset("config/profile", "profile-*.yaml") :
+    trimsuffix(k, ".yaml") => yamldecode(file("config/profile/${k}"))
+  }
+
+  appliances = {
+    for k in fileset("config/appliance", "appliance-*.yaml") :
+    trimsuffix(k, ".yaml") => yamldecode(file("config/appliance/${k}"))
+  }
+
+  clusters = {
+    for k in fileset("config/cluster", "cluster-*.yaml") :
+    trimsuffix(k, ".yaml") => yamldecode(file("config/cluster/${k}"))
   }
 }
 
-# Spectro Cloud
-variable "sc_host" {}
-variable "sc_username" {}
-variable "sc_password" {}
-variable "sc_project_name" {}
+module "Spectro" {
+  source = "/Users/rishi/work/git_clones/terraform-spectrocloud-modules"
+  #source  = "spectrocloud/modules/spectrocloud"
+  #version = "0.0.7"
 
-provider "spectrocloud" {
-  host         = var.sc_host
-  username     = var.sc_username
-  password     = var.sc_password
-  project_name = var.sc_project_name
+  accounts   = local.accounts
+  bsls       = local.bsls
+  profiles   = local.profiles
+  appliances = local.appliances
 }
 
-# data "spectrocloud_cloudaccount_aws" "default" {
-#   name = "aws-picard-2"
-# }
+module "SpectroClusters" {
+  depends_on = [module.Spectro]
+  source     = "/Users/rishi/work/git_clones/terraform-spectrocloud-modules"
+  #source  = "spectrocloud/modules/spectrocloud"
+  #version = "0.0.7"
+
+  clusters = local.clusters
+}
